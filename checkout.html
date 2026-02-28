@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenithra — checkout</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            line-height:1.5;
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            position:relative;
+            overflow-x:hidden;
+        }
+        body::before {
+            content:'';
+            position:fixed;
+            top:0; left:0; width:100%; height:100%;
+            background:radial-gradient(circle at 30% 40%, rgba(198,167,94,0.05) 0%, transparent 40%),
+                       radial-gradient(circle at 70% 60%, rgba(198,167,94,0.03) 0%, transparent 50%),
+                       #0f0f0f;
+            z-index:-2;
+            animation:slowDrift 20s infinite alternate ease-in-out;
+        }
+        body::after {
+            content:'';
+            position:fixed;
+            top:0; left:0; width:100%; height:100%;
+            background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><circle cx="2" cy="2" r="0.5" fill="%23c6a75e" opacity="0.1"/></svg>');
+            pointer-events:none;
+            z-index:-1;
+            opacity:0.2;
+        }
+        @keyframes slowDrift {
+            0% { transform:scale(1) translate(0%,0%); }
+            100% { transform:scale(1.1) translate(2%,3%); }
+        }
+        .container {
+            width:90%;
+            max-width:800px;
+            margin:0 auto;
+            padding:0 1rem;
+        }
+        .site-header {
+            padding:2rem 0 1rem;
+            border-bottom:1px solid rgba(198,167,94,0.2);
+            margin-bottom:2rem;
+        }
+        .header-container {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+        }
+        .logo-link { display:block; }
+        .logo {
+            height:32px;
+            width:auto;
+            filter:brightness(0) invert(1) drop-shadow(0 0 2px rgba(198,167,94,0.3));
+        }
+        .logo-fallback {
+            font-size:1.8rem;
+            font-weight:300;
+            letter-spacing:4px;
+            color:#c6a75e;
+            text-transform:uppercase;
+        }
+        .main-nav ul {
+            display:flex;
+            gap:2rem;
+            list-style:none;
+        }
+        .nav-link {
+            text-decoration:none;
+            color:#aaa;
+            font-size:0.9rem;
+            letter-spacing:1px;
+            text-transform:uppercase;
+            transition:color 0.2s;
+            padding-bottom:4px;
+            border-bottom:1px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color:#c6a75e;
+            border-bottom-color:#c6a75e;
+        }
+        .btn {
+            display:inline-block;
+            padding:0.8rem 2.2rem;
+            text-decoration:none;
+            font-size:0.9rem;
+            letter-spacing:1.5px;
+            text-transform:uppercase;
+            border:1px solid transparent;
+            transition:all 0.3s ease;
+            cursor:pointer;
+            background:transparent;
+            border-radius:0;
+        }
+        .btn-gold {
+            background-color:#c6a75e;
+            color:#0f0f0f;
+            border-color:#c6a75e;
+        }
+        .btn-gold:hover {
+            background-color:transparent;
+            color:#c6a75e;
+            box-shadow:0 0 12px rgba(198,167,94,0.3);
+        }
+        .site-footer {
+            margin-top:auto;
+            padding:3rem 0 2rem;
+            border-top:1px solid rgba(198,167,94,0.1);
+            text-align:center;
+            font-size:0.9rem;
+            color:#777;
+        }
+        .footer-contact {
+            margin-top:0.5rem;
+            font-size:0.85rem;
+        }
+        .footer-contact span {
+            color:#c6a75e;
+        }
+
+        /* checkout specific */
+        .checkout-container { margin:2rem 0; }
+        .product-summary {
+            display:flex;
+            gap:2rem;
+            background:#1a1a1a;
+            padding:1.5rem;
+            border:1px solid #2a2a2a;
+            margin-bottom:2rem;
+            align-items:center;
+        }
+        .product-summary img {
+            width:80px;
+            height:80px;
+            object-fit:cover;
+        }
+        .product-summary-details { flex:1; }
+        .product-summary-name { font-weight:300; font-size:1.2rem; }
+        .product-summary-price { color:#c6a75e; }
+        .quantity-selector {
+            display:flex;
+            align-items:center;
+            gap:1rem;
+            margin:1rem 0;
+        }
+        .quantity-selector input {
+            width:70px;
+            padding:0.5rem;
+            background:#1e1e1e;
+            border:1px solid #333;
+            color:white;
+        }
+        .total-price {
+            font-size:1.5rem;
+            color:#c6a75e;
+            text-align:right;
+            margin:1rem 0;
+        }
+        .form-group {
+            margin-bottom:1.5rem;
+        }
+        .form-group label {
+            display:block;
+            margin-bottom:0.3rem;
+            color:#aaa;
+            text-transform:uppercase;
+            font-size:0.8rem;
+            letter-spacing:1px;
+        }
+        .form-group input {
+            width:100%;
+            padding:0.8rem;
+            background:#1e1e1e;
+            border:1px solid #333;
+            color:#e0e0e0;
+        }
+        .form-group input:focus {
+            border-color:#c6a75e;
+            outline:none;
+        }
+        .support-banner {
+            background:rgba(198,167,94,0.1);
+            padding:1rem;
+            text-align:center;
+            margin:2rem 0;
+            border:1px dashed #c6a75e;
+        }
+        .support-banner span {
+            color:#c6a75e;
+            font-weight:500;
+        }
+        .loading, .error-message {
+            text-align:center;
+            padding:3rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo-link">
+                <img src="logo.png" alt="Zenithra Logo" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="logo-fallback" style="display:none;">Zenithra</span>
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    <li><a href="auth.html" class="nav-link">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container checkout-container" id="checkout-main">
+        <h1 style="font-weight:200; letter-spacing:2px; margin-bottom:2rem;">Complete your order</h1>
+        <div id="checkout-content" class="loading">Loading order details...</div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>Zenithra — since 2025</p>
+            <div class="footer-contact">
+                <span>📞 +91 8327641735</span> | <span>✉️ contact.Zenithraluxuary@gmail.com</span>
+            </div>
+            <p style="margin-top:1rem;">© Zenithra. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, addDoc, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-imAMNL_aWnyRlWIvafELiSWj-IFwyzM",
+            authDomain: "zenithra-6b7b6.firebaseapp.com",
+            databaseURL: "https://zenithra-6b7b6-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "zenithra-6b7b6",
+            storageBucket: "zenithra-6b7b6.firebasestorage.app",
+            messagingSenderId: "1014569701920",
+            appId: "1:1014569701920:web:ef885db9293718dbc32245"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        const container = document.getElementById('checkout-content');
+
+        let product = null;
+
+        async function loadProductForCheckout() {
+            if (!productId) {
+                container.innerHTML = '<div class="error-message">No product specified.</div>';
+                return;
+            }
+            try {
+                const docRef = doc(db, 'products', productId);
+                const docSnap = await getDoc(docRef);
+                if (!docSnap.exists()) {
+                    container.innerHTML = '<div class="error-message">Product not found.</div>';
+                    return;
+                }
+                product = { id: docSnap.id, ...docSnap.data() };
+                renderCheckoutForm(product);
+            } catch (error) {
+                container.innerHTML = '<div class="error-message">Failed to load product. Please try again.</div>';
+            }
+        }
+
+        function renderCheckoutForm(p) {
+            let quantity = 1;
+            const total = p.price * quantity;
+
+            const html = `
+                <div class="product-summary">
+                    <img src="${p.image || 'https://via.placeholder.com/100'}" alt="${p.name}">
+                    <div class="product-summary-details">
+                        <div class="product-summary-name">${p.name}</div>
+                        <div class="product-summary-price">CHF ${p.price.toLocaleString()}</div>
+                    </div>
+                </div>
+                <div class="quantity-selector">
+                    <label>Quantity</label>
+                    <input type="number" id="quantity" min="1" max="${p.stock || 10}" value="1">
+                </div>
+                <div class="total-price" id="totalDisplay">Total: CHF ${total.toLocaleString()}</div>
+
+                <form id="order-form">
+                    <h3 style="margin:2rem 0 1rem; font-weight:200;">Shipping details</h3>
+                    <div class="form-group"><label>Full Name *</label><input type="text" id="fullName" required></div>
+                    <div class="form-group"><label>Phone *</label><input type="tel" id="phone" required></div>
+                    <div class="form-group"><label>Address *</label><input type="text" id="address" required></div>
+                    <div class="form-group"><label>City *</label><input type="text" id="city" required></div>
+                    <div class="form-group"><label>State *</label><input type="text" id="state" required></div>
+                    <div class="form-group"><label>Pincode *</label><input type="text" id="pincode" required></div>
+                    
+                    <div class="support-banner">
+                        ⏳ For assistance call <span>+91 8327641735</span> or email <span>contact.Zenithraluxuary@gmail.com</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-gold" style="width:100%;">Confirm Order (COD)</button>
+                </form>
+            `;
+            container.innerHTML = html;
+
+            const quantityInput = document.getElementById('quantity');
+            const totalSpan = document.getElementById('totalDisplay');
+            quantityInput.addEventListener('input', () => {
+                const q = parseInt(quantityInput.value) || 1;
+                totalSpan.innerText = `Total: CHF ${(p.price * q).toLocaleString()}`;
+            });
+
+            document.getElementById('order-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await placeOrder(p);
+            });
+        }
+
+        async function placeOrder(p) {
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            const totalPrice = p.price * quantity;
+            const orderData = {
+                productId: p.id,
+                productName: p.name,
+                price: p.price,
+                quantity,
+                totalPrice,
+                customerName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                state: document.getElementById('state').value,
+                pincode: document.getElementById('pincode').value,
+                timestamp: serverTimestamp()
+            };
+
+            try {
+                // ensure user is authenticated (anonymous if needed)
+                let user = auth.currentUser;
+                if (!user) {
+                    const cred = await signInAnonymously(auth);
+                    user = cred.user;
+                }
+                orderData.userId = user.uid;
+
+                await addDoc(collection(db, 'orders'), orderData);
+                alert('Order placed successfully. We will contact you shortly.');
+                window.location.href = 'shop.html';
+            } catch (error) {
+                alert('Order failed. Please try again or contact support.');
+            }
+        }
+
+        loadProductForCheckout();
+    </script>
+</body>
+</html>

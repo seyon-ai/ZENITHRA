@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zenithra — timepiece</title>
+    <style>
+        /* Base styles (identical to previous for consistency) */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f0f0f;
+            color: #e0e0e0;
+            line-height:1.5;
+            min-height:100vh;
+            display:flex;
+            flex-direction:column;
+            position:relative;
+            overflow-x:hidden;
+        }
+        body::before {
+            content:'';
+            position:fixed;
+            top:0; left:0; width:100%; height:100%;
+            background:radial-gradient(circle at 30% 40%, rgba(198,167,94,0.05) 0%, transparent 40%),
+                       radial-gradient(circle at 70% 60%, rgba(198,167,94,0.03) 0%, transparent 50%),
+                       #0f0f0f;
+            z-index:-2;
+            animation:slowDrift 20s infinite alternate ease-in-out;
+        }
+        body::after {
+            content:'';
+            position:fixed;
+            top:0; left:0; width:100%; height:100%;
+            background:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="4" height="4" viewBox="0 0 4 4"><circle cx="2" cy="2" r="0.5" fill="%23c6a75e" opacity="0.1"/></svg>');
+            pointer-events:none;
+            z-index:-1;
+            opacity:0.2;
+        }
+        @keyframes slowDrift {
+            0% { transform:scale(1) translate(0%,0%); }
+            100% { transform:scale(1.1) translate(2%,3%); }
+        }
+        .container {
+            width:90%;
+            max-width:1280px;
+            margin:0 auto;
+            padding:0 1rem;
+        }
+        .site-header {
+            padding:2rem 0 1rem;
+            border-bottom:1px solid rgba(198,167,94,0.2);
+            margin-bottom:2rem;
+        }
+        .header-container {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+        }
+        .logo-link { display:block; }
+        .logo {
+            height:32px;
+            width:auto;
+            filter:brightness(0) invert(1) drop-shadow(0 0 2px rgba(198,167,94,0.3));
+        }
+        .logo-fallback {
+            font-size:1.8rem;
+            font-weight:300;
+            letter-spacing:4px;
+            color:#c6a75e;
+            text-transform:uppercase;
+        }
+        .main-nav ul {
+            display:flex;
+            gap:2rem;
+            list-style:none;
+        }
+        .nav-link {
+            text-decoration:none;
+            color:#aaa;
+            font-size:0.9rem;
+            letter-spacing:1px;
+            text-transform:uppercase;
+            transition:color 0.2s;
+            padding-bottom:4px;
+            border-bottom:1px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color:#c6a75e;
+            border-bottom-color:#c6a75e;
+        }
+        .btn {
+            display:inline-block;
+            padding:0.8rem 2.2rem;
+            text-decoration:none;
+            font-size:0.9rem;
+            letter-spacing:1.5px;
+            text-transform:uppercase;
+            border:1px solid transparent;
+            transition:all 0.3s ease;
+            cursor:pointer;
+            background:transparent;
+            border-radius:0;
+        }
+        .btn-gold {
+            background-color:#c6a75e;
+            color:#0f0f0f;
+            border-color:#c6a75e;
+        }
+        .btn-gold:hover {
+            background-color:transparent;
+            color:#c6a75e;
+            box-shadow:0 0 12px rgba(198,167,94,0.3);
+        }
+        .site-footer {
+            margin-top:auto;
+            padding:3rem 0 2rem;
+            border-top:1px solid rgba(198,167,94,0.1);
+            text-align:center;
+            font-size:0.9rem;
+            color:#777;
+        }
+        .footer-contact {
+            margin-top:0.5rem;
+            font-size:0.85rem;
+        }
+        .footer-contact span {
+            color:#c6a75e;
+        }
+
+        /* product detail */
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin: 3rem 0;
+        }
+        @media (max-width:700px) {
+            .product-detail { grid-template-columns:1fr; gap:2rem; }
+        }
+        .product-image-large {
+            width:100%;
+            aspect-ratio:1/1;
+            object-fit:cover;
+            background:#222;
+        }
+        .product-info h2 {
+            font-weight:200;
+            font-size:2.5rem;
+            margin-bottom:1rem;
+        }
+        .product-info .price {
+            font-size:2rem;
+            color:#c6a75e;
+            margin-bottom:1.5rem;
+        }
+        .product-info .description {
+            color:#aaa;
+            line-height:1.8;
+            margin-bottom:2rem;
+        }
+        .stock {
+            color:#6a8e6a;
+            margin-bottom:2rem;
+        }
+        .out-of-stock { color:#a05a5a; }
+        .loading, .error-message { text-align:center; padding:3rem; }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo-link">
+                <img src="logo.png" alt="Zenithra Logo" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <span class="logo-fallback" style="display:none;">Zenithra</span>
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                    <li><a href="auth.html" class="nav-link">Login</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" id="product-detail">
+        <div class="loading">Loading timepiece...</div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>Zenithra — since 2025</p>
+            <div class="footer-contact">
+                <span>📞 +91 8327641735</span> | <span>✉️ contact.Zenithraluxuary@gmail.com</span>
+            </div>
+            <p style="margin-top:1rem;">© Zenithra. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC-imAMNL_aWnyRlWIvafELiSWj-IFwyzM",
+            authDomain: "zenithra-6b7b6.firebaseapp.com",
+            databaseURL: "https://zenithra-6b7b6-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "zenithra-6b7b6",
+            storageBucket: "zenithra-6b7b6.firebasestorage.app",
+            messagingSenderId: "1014569701920",
+            appId: "1:1014569701920:web:ef885db9293718dbc32245"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        const container = document.getElementById('product-detail');
+
+        async function loadProduct() {
+            if (!productId) {
+                container.innerHTML = '<div class="error-message">Invalid product.</div>';
+                return;
+            }
+            try {
+                const docRef = doc(db, 'products', productId);
+                const docSnap = await getDoc(docRef);
+                if (!docSnap.exists()) {
+                    container.innerHTML = '<div class="error-message">Timepiece not found.</div>';
+                    return;
+                }
+                const p = docSnap.data();
+                const stockClass = p.stock > 0 ? 'stock' : 'out-of-stock';
+                const stockText = p.stock > 0 ? `In stock (${p.stock} available)` : 'Out of stock';
+                const orderButton = p.stock > 0 ? `<a href="checkout.html?id=${productId}" class="btn btn-gold">Order now</a>` : '';
+                container.innerHTML = `
+                    <div class="product-detail">
+                        <img src="${p.image || 'https://via.placeholder.com/600?text=Zenithra'}" alt="${p.name}" class="product-image-large">
+                        <div class="product-info">
+                            <h2>${p.name}</h2>
+                            <div class="price">CHF ${p.price?.toLocaleString()}</div>
+                            <div class="description">${p.description || 'No description.'}</div>
+                            <div class="${stockClass}">${stockText}</div>
+                            ${orderButton}
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                container.innerHTML = '<div class="error-message">Product temporarily unavailable.</div>';
+            }
+        }
+        loadProduct();
+    </script>
+</body>
+</html>
