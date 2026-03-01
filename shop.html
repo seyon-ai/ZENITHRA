@@ -190,7 +190,6 @@ import { getFirestore, collection, getDocs } from "https://www.gstatic.com/fireb
 const firebaseConfig = {
   apiKey: "AIzaSyC-imAMNL_aWnyRlWIvafELiSWj-IFwyzM",
   authDomain: "zenithra-6b7b6.firebaseapp.com",
-  databaseURL: "https://zenithra-6b7b6-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "zenithra-6b7b6",
   storageBucket: "zenithra-6b7b6.firebasestorage.app",
   messagingSenderId: "1014569701920",
@@ -200,42 +199,43 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function loadProducts(){
-  const container = document.getElementById("products-container");
-  const message = document.getElementById("message");
+const container = document.getElementById("products-container");
+const message = document.getElementById("message");
 
-  try{
-    const snapshot = await getDocs(collection(db,"products"));
+async function loadProducts() {
+  message.textContent = "Loading products...";
 
-    if(snapshot.empty){
-      message.textContent = "Collection launching soon.";
+  try {
+    const querySnapshot = await getDocs(collection(db, "products"));
+
+    if (querySnapshot.empty) {
+      message.textContent = "No products found in database.";
       return;
     }
 
-    snapshot.forEach((docItem, index)=>{
-      const p = docItem.data();
+    container.innerHTML = "";
+    message.textContent = "";
+
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data();
 
       const card = document.createElement("a");
-      card.href = `product.html?id=${docItem.id}`;
+      card.href = `product.html?id=${docSnap.id}`;
       card.className = "product-card";
-      card.style.animationDelay = `${index * 0.1}s`;
 
       card.innerHTML = `
-        <img src="${p.image}" alt="${p.name}">
-        <h3>${p.name}</h3>
-        <p>₹${p.price}</p>
+        <img src="${data.image || 'https://via.placeholder.com/300'}" alt="${data.name}">
+        <h3>${data.name}</h3>
+        <p>₹${data.price}</p>
       `;
 
       container.appendChild(card);
     });
 
-  }catch(error){
-    message.textContent = "Products temporarily unavailable.";
+  } catch (error) {
+    message.textContent = "Error: " + error.message;
   }
 }
 
 loadProducts();
 </script>
-
-</body>
-</html>
